@@ -5,6 +5,8 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.Month;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
@@ -25,10 +27,10 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxCategoria"
-    private ComboBox<?> boxCategoria; // Value injected by FXMLLoader
+    private ComboBox<String> boxCategoria; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Month> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnAnalisi"
     private Button btnAnalisi; // Value injected by FXMLLoader
@@ -49,7 +51,15 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	try {
+    		String categoria = boxCategoria.getValue();
+    		Month mese = boxMese.getValue();
+    		int month = mese.getValue();
+    		model.creaGrafo(month, categoria);
+    		txtResult.setText(model.output());
+    	} catch (Exception e) {
+    		txtResult.setText("Errore!");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -65,5 +75,13 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	List<String> ls = model.getCategories();
+    	boxCategoria.getItems().addAll(ls);
+    	boxCategoria.setValue(ls.get(0));
+    	
+    	List<Month> lc = model.getMonths();
+    	boxMese.getItems().addAll(lc);
+    	boxMese.setValue(lc.get(0));
     }
 }
